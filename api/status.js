@@ -9,8 +9,43 @@ import { supabaseClient } from '../src/lib/supabase.js';
  */
 export default async function handler(req, res) {
   try {
-    // Obter status do banco
-    const status = await supabaseClient.getSystemStatus();
+    // Contagem da fila
+    const counts = {
+      pending: 0,
+      processing: 0,
+      completed: 0,
+      failed: 0
+    };
+    
+    if (supabaseClient.client) {
+      // Pending
+      const { count: pending } = await supabaseClient.client
+        .from('products_queue')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      counts.pending = pending || 0;
+      
+      // Processing
+      const { count: processing } = await supabaseClient.client
+        .from('products_queue')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'processing');
+      counts.processing = processing || 0;
+      
+      // Completed
+      const { count: completed } = await supabaseClient.client
+        .from('products_queue')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'completed');
+      counts.completed = completed || 0;
+      
+      // Failed
+      const { count: failed } = await supabaseClient.client
+        .from('products_queue')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'failed');
+      counts.failed = failed || 0;
+    }
 
     // Obter configurações
     const config = {
@@ -19,40 +54,11 @@ export default async function handler(req, res) {
       processing_settings: await supabaseClient.getConfig('processing_settings')
     };
 
-    // Obter últimas sincronizações
-    let recentSyncs = [];
-    if (supabaseClient.client) {
-      const { data } = await supabaseClient.client
-        .from('sync_history')
-        .select('*')
-        .order('started_at', { ascending: false })
-        .limit(5);
-      recentSyncs = data || [];
-    }
-
     return res.status(200).json({
       status: 'running',
       timestamp: new Date().toISOString(),
-      queue: {
-        pending: status?.pending_products || 0,
-        processing: status?.processing_products || 0,
-        completed: status?.completed_products || 0,
-        failed: status?.failed_products || 0
-      },
-      cache: {
-        total_products: status?.total_cached_products || 0,
-        last_sync: status?.last_successful_sync
-      },
-      config,
-      recent_syncs: recentSyncs.map(s => ({
-        type: s.sync_type,
-        status: s.status,
-        products_total: s.products_total,
-        products_processed: s.products_processed,
-        products_failed: s.products_failed,
-        started_at: s.started_at,
-        completed_at: s.completed_at
-      }))
+      queue: counts,
+      config
     });
 
   } catch (error) {
