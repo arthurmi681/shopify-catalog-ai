@@ -1,23 +1,25 @@
 // ========================================
-// OPENAI CLIENT - Cliente da API da OpenAI
+// GROQ CLIENT - Cliente da API da Groq (gratuito)
 // ========================================
 
 import OpenAI from 'openai';
 
 /**
- * Cria cliente da OpenAI API
+ * Cria cliente da Groq API
  */
-class OpenAIClient {
+class GroqClient {
   constructor() {
     this.apiKey = process.env.OPENAI_API_KEY;
     
     if (!this.apiKey) {
-      console.warn('[OpenAI] API key não configurada');
+      console.warn('[Groq] API key não configurada');
       return;
     }
     
+    // Groq usa a mesma lib OpenAI, mas com endpoint diferente
     this.client = new OpenAI({
-      apiKey: this.apiKey
+      apiKey: this.apiKey,
+      baseURL: 'https://api.groq.com/openai/v1'
     });
   }
   
@@ -26,18 +28,18 @@ class OpenAIClient {
    */
   async chatCompletions(options) {
     if (!this.client) {
-      throw new Error('OpenAI não configurada');
+      throw new Error('Groq não configurada');
     }
     
     return this.client.chat.completions.create(options);
   }
   
   /**
-   * Gera texto com GPT
+   * Gera texto com Groq (Llama ou Mixtral)
    */
   async generate(prompt, options = {}) {
     const response = await this.chatCompletions({
-      model: options.model || 'gpt-4o',
+      model: options.model || 'llama-3.3-70b-versatile',
       temperature: options.temperature || 0.7,
       max_tokens: options.max_tokens || 2000,
       messages: [
@@ -53,7 +55,7 @@ class OpenAIClient {
    */
   async analyzeProduct(productData) {
     const response = await this.chatCompletions({
-      model: 'gpt-4o',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.3,
       messages: [
         {
@@ -67,7 +69,7 @@ class OpenAIClient {
       ],
       response_format: { type: 'json_object' }
     });
-    
+
     return JSON.parse(response.choices[0].message.content);
   }
 }
@@ -76,5 +78,5 @@ class OpenAIClient {
 // EXPORTS
 // ========================================
 
-export const openAIClient = new OpenAIClient();
+export const openAIClient = new GroqClient();
 export default openAIClient;
