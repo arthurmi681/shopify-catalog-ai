@@ -1,0 +1,64 @@
+name: 🤖 Shopify Catalog AI Sync
+
+on:
+  schedule:
+    # Roda a cada 6 horas
+    - cron: '0 */6 * * *'
+  
+  workflow_dispatch: # Permite rodar manualmente
+  
+  repository_dispatch: # Permite trigger externo
+    types: [shopify-product-created, shopify-product-updated]
+
+jobs:
+  sync-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Instalar dependências
+        run: npm ci
+      
+      - name: 🔄 Sincronizar produtos
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          npm run sync
+      
+      - name: 📊 Gerar relatório
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          npm run generate-report
+      
+      - name: 📧 Notificar resultado
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: ⚠️ Erro na sincronização do catálogo
+          body: |
+            A sincronização automática falhou.
+            
+            Verifique os logs do GitHub Actions para mais detalhes.
+            
+            🔗 https://github.com/${{ github.repository }}/actions
+          to: ${{ secrets.NOTIFY_EMAIL }}

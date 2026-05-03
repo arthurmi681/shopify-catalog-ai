@@ -1,0 +1,26 @@
+{
+  "name": "shopify-catalog-ai",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sistema de IA para automatizar e otimizar catálogos Shopify",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "sync": "node src/scripts/sync-products.js",
+    "test": "node src/scripts/test-single-product.js",
+    "queue": "node src/scripts/process-queue.js",
+    "generate-report": "node src/scripts/generate-report.js"
+  },
+  "dependencies": {
+    "@shopify/shopify-api": "^9.0.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "openai": "^4.20.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

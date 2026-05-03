@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "functions": {
+    "src/api/**/*.js": {
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "crons": [
+    {
+      "path": "/api/process-queue",
+      "schedule": "*/10 * * * *"
+    }
+  ]
+}
