@@ -2,7 +2,7 @@
 // STATUS - Status do sistema
 // ========================================
 
-import { supabaseClient } from '../../lib/supabase.js';
+import { supabaseClient } from '../src/lib/supabase.js';
 
 /**
  * Handler do status

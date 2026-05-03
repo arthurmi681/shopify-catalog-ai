@@ -2,8 +2,8 @@
 // WEBHOOK - Recebe eventos da Shopify
 // ========================================
 
-import { supabaseClient } from '../../lib/supabase.js';
-import { shopifyClient } from '../../lib/shopify.js';
+import crypto from 'crypto';
+import { supabaseClient } from '../src/lib/supabase.js';
 
 /**
  * Handler do webhook
@@ -102,6 +102,3 @@ async function handleWebhook(body, topic) {
 
   return { received: true, processed: true };
 }
-
-import crypto from 'crypto';
-import { logEvent } from '../../lib/logger.js';

@@ -2,9 +2,9 @@
 // MANUAL SYNC - Sincronização manual
 // ========================================
 
-import { supabaseClient } from '../../lib/supabase.js';
-import { shopifyClient } from '../../lib/shopify.js';
-import { processProduct } from '../lib/orchestrator.js';
+import { supabaseClient } from '../src/lib/supabase.js';
+import { shopifyClient } from '../src/lib/shopify.js';
+import { processProduct } from '../src/lib/orchestrator.js';
 
 /**
  * Handler do manual-sync

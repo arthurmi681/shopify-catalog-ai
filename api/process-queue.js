@@ -3,8 +3,8 @@
 // Roda a cada 10 minutos via Vercel Cron
 // ========================================
 
-import { supabaseClient } from '../../lib/supabase.js';
-import { processProduct } from '../lib/orchestrator.js';
+import { supabaseClient } from '../src/lib/supabase.js';
+import { processProduct } from '../src/lib/orchestrator.js';
 
 /**
  * Handler do process-queue

@@ -7,11 +7,5 @@
   },
   "env": {
     "NODE_ENV": "production"
-  },
-  "crons": [
-    {
-      "path": "/api/process-queue",
-      "schedule": "*/10 * * * *"
-    }
-  ]
+  }
 }

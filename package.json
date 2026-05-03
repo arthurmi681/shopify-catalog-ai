@@ -12,13 +12,13 @@
     "generate-report": "node src/scripts/generate-report.js"
   },
   "dependencies": {
-    "@shopify/shopify-api": "^9.0.0",
-    "@supabase/supabase-js": "^2.39.0",
-    "openai": "^4.20.0",
-    "dotenv": "^16.3.1"
+    "@shopify/shopify-api": "^9.7.2",
+    "@supabase/supabase-js": "^2.105.1",
+    "dotenv": "^16.6.1",
+    "openai": "^4.104.0"
   },
   "devDependencies": {
-    "@vercel/node": "^3.0.0"
+    "@vercel/node": "^3.2.29"
   },
   "engines": {
     "node": ">=20.0.0"
